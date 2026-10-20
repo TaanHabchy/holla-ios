@@ -13,17 +13,31 @@ enum ProfileRepository {
             .execute()
             .value
 
+        let fullName = session.user.userMetadata["full_name"]?.stringValue
+
         if let existing {
+            // Apple's name arrives in a follow-up metadata update, after the
+            // profile row may already have been created without it.
+            if existing.displayName == nil, let fullName {
+                return try await SupabaseManager.client
+                    .from("profiles")
+                    .update(["display_name": fullName])
+                    .eq("id", value: userId)
+                    .select()
+                    .single()
+                    .execute()
+                    .value
+            }
             return existing
         }
 
-        guard let email = session.user.email else {
-            return nil
-        }
+        var row = ["id": userId.uuidString]
+        row["email"] = session.user.email
+        row["display_name"] = fullName
 
         let created: Profile = try await SupabaseManager.client
             .from("profiles")
-            .insert(["id": userId.uuidString, "email": email])
+            .insert(row)
             .select()
             .single()
             .execute()

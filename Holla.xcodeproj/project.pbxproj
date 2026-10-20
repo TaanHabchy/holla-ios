@@ -18,7 +18,7 @@
 		1A0000000000000000000025 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000024 /* AppState.swift */; };
 		1A0000000000000000000027 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000026 /* RootView.swift */; };
 		1A0000000000000000000029 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000028 /* ProfileRepository.swift */; };
-		1A000000000000000000002B /* EmailEntryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002A /* EmailEntryScreen.swift */; };
+		1A000000000000000000002B /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002A /* SignInScreen.swift */; };
 		1A000000000000000000002D /* FriendsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002C /* FriendsRepository.swift */; };
 		1A000000000000000000002F /* AvailabilityRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000002E /* AvailabilityRepository.swift */; };
 		1A0000000000000000000031 /* PhoneNumberNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000030 /* PhoneNumberNormalizer.swift */; };
@@ -46,7 +46,7 @@
 		1A0000000000000000000024 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		1A0000000000000000000026 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		1A0000000000000000000028 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
-		1A000000000000000000002A /* EmailEntryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailEntryScreen.swift; sourceTree = "<group>"; };
+		1A000000000000000000002A /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
 		1A000000000000000000002C /* FriendsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsRepository.swift; sourceTree = "<group>"; };
 		1A000000000000000000002E /* AvailabilityRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityRepository.swift; sourceTree = "<group>"; };
 		1A0000000000000000000030 /* PhoneNumberNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberNormalizer.swift; sourceTree = "<group>"; };
@@ -103,7 +103,7 @@
 				1A0000000000000000000024 /* AppState.swift */,
 				1A0000000000000000000026 /* RootView.swift */,
 				1A0000000000000000000028 /* ProfileRepository.swift */,
-				1A000000000000000000002A /* EmailEntryScreen.swift */,
+				1A000000000000000000002A /* SignInScreen.swift */,
 				1A000000000000000000002C /* FriendsRepository.swift */,
 				1A000000000000000000002E /* AvailabilityRepository.swift */,
 				1A0000000000000000000030 /* PhoneNumberNormalizer.swift */,
@@ -204,7 +204,7 @@
 				1A0000000000000000000025 /* AppState.swift in Sources */,
 				1A0000000000000000000027 /* RootView.swift in Sources */,
 				1A0000000000000000000029 /* ProfileRepository.swift in Sources */,
-				1A000000000000000000002B /* EmailEntryScreen.swift in Sources */,
+				1A000000000000000000002B /* SignInScreen.swift in Sources */,
 				1A000000000000000000002D /* FriendsRepository.swift in Sources */,
 				1A000000000000000000002F /* AvailabilityRepository.swift in Sources */,
 				1A0000000000000000000031 /* PhoneNumberNormalizer.swift in Sources */,
@@ -345,6 +345,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = Holla/Holla.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSContactsUsageDescription = "Holla at your friends.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -375,6 +376,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = Holla/Holla.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSContactsUsageDescription = "Holla at your friends.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

@@ -12,7 +12,7 @@ struct RootView: View {
         case .loading:
             ProgressView()
         case .signedOut:
-            EmailEntryScreen()
+            SignInScreen()
         case .onboarding:
             OnboardingContainerView()
         case .main:

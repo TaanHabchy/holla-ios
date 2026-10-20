@@ -44,15 +44,6 @@ enum APIClient {
         return try JSONDecoder().decode(T.self, from: data)
     }
 
-    struct EmailLoginResponse: Decodable {
-        let tokenHash: String
-        let verificationType: String
-    }
-
-    static func emailLogin(email: String) async throws -> EmailLoginResponse {
-        try await request("/api/auth/email-login", body: ["email": email], requireAuth: false)
-    }
-
     struct SyncContactsResponse: Decodable {}
 
     static func syncContacts(phoneNumbers: [String]) async throws {
