@@ -8,14 +8,12 @@ struct Profile: Codable, Identifiable {
     let createdAt: Date
     let email: String?
     let phoneNumber: String?
+}
 
-    enum CodingKeys: String, CodingKey {
-        case id
-        case displayName = "display_name"
-        case photoURL = "photo_url"
-        case onboardingComplete = "onboarding_complete"
-        case createdAt = "created_at"
-        case email
-        case phoneNumber = "phone_number"
-    }
+struct Friend: Decodable, Identifiable {
+    let id: UUID
+    let displayName: String?
+    let email: String?
+    let phoneNumber: String?
+    let isAvailable: Bool
 }

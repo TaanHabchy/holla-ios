@@ -24,8 +24,8 @@ final class AppState {
     func bootstrap() async {
         for await (_, session) in SupabaseManager.client.auth.authStateChanges {
             self.session = session
-            if let session {
-                self.profile = try? await ProfileRepository.fetchOrCreateProfile(session: session)
+            if session != nil {
+                self.profile = try? await ProfileRepository.fetchOrCreateProfile()
             } else {
                 self.profile = nil
             }
@@ -34,7 +34,7 @@ final class AppState {
     }
 
     func refreshProfile() async {
-        guard let session else { return }
-        profile = try? await ProfileRepository.fetchOrCreateProfile(session: session)
+        guard session != nil else { return }
+        profile = try? await ProfileRepository.fetchOrCreateProfile()
     }
 }

@@ -12,26 +12,65 @@ enum APIError: LocalizedError {
     }
 }
 
-/// Mirrors src/lib/api.ts's `request` helper in the RN app: POSTs JSON to the
-/// .NET backend, attaching the current Supabase session as a bearer token
-/// when the endpoint requires auth.
+/// Sends JSON requests to holla-backend (or the legacy .NET backend),
+/// attaching the current Supabase session as a bearer token. All data access
+/// goes through here; the app talks to Supabase directly only for auth.
 enum APIClient {
-    static func request<T: Decodable>(
-        _ path: String,
-        body: [String: Any] = [:],
-        requireAuth: Bool
-    ) async throws -> T {
-        var urlRequest = URLRequest(url: Config.apiBaseURL.appendingPathComponent(path))
-        urlRequest.httpMethod = "POST"
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
+    enum Method: String {
+        case get = "GET"
+        case post = "POST"
+        case put = "PUT"
+        case patch = "PATCH"
+    }
 
-        if requireAuth {
-            guard let session = try? await SupabaseManager.client.auth.session else {
-                throw APIError.notSignedIn
+    private struct NoBody: Encodable {}
+    struct Empty: Decodable {}
+
+    private static let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        let withFractionalSeconds = ISO8601DateFormatter()
+        withFractionalSeconds.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let withoutFractionalSeconds = ISO8601DateFormatter()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let string = try decoder.singleValueContainer().decode(String.self)
+            guard let date = withFractionalSeconds.date(from: string)
+                ?? withoutFractionalSeconds.date(from: string)
+            else {
+                throw DecodingError.dataCorrupted(.init(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Invalid ISO-8601 date: \(string)"
+                ))
             }
-            urlRequest.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+            return date
         }
+        return decoder
+    }()
+
+    static func request<T: Decodable>(
+        _ method: Method,
+        _ path: String,
+        baseURL: URL = Config.backendBaseURL
+    ) async throws -> T {
+        try await request(method, path, body: Optional<NoBody>.none, baseURL: baseURL)
+    }
+
+    static func request<T: Decodable, Body: Encodable>(
+        _ method: Method,
+        _ path: String,
+        body: Body?,
+        baseURL: URL = Config.backendBaseURL
+    ) async throws -> T {
+        var urlRequest = URLRequest(url: baseURL.appendingPathComponent(path))
+        urlRequest.httpMethod = method.rawValue
+        if let body {
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpBody = try JSONEncoder().encode(body)
+        }
+
+        guard let session = try? await SupabaseManager.client.auth.session else {
+            throw APIError.notSignedIn
+        }
+        urlRequest.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
 
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
         guard let httpResponse = response as? HTTPURLResponse else {
@@ -41,17 +80,29 @@ enum APIClient {
             let message = (try? JSONDecoder().decode([String: String].self, from: data))?["error"]
             throw APIError.server(message ?? "Request to \(path) failed (\(httpResponse.statusCode))")
         }
-        return try JSONDecoder().decode(T.self, from: data)
+        if T.self == Empty.self, data.isEmpty {
+            return Empty() as! T
+        }
+        return try decoder.decode(T.self, from: data)
     }
 
-    struct SyncContactsResponse: Decodable {}
+    // MARK: - Legacy .NET backend (to be ported to holla-backend)
+
+    private struct SyncContactsBody: Encodable {
+        let phoneNumbers: [String]
+    }
 
     static func syncContacts(phoneNumbers: [String]) async throws {
-        let _: SyncContactsResponse = try await request(
+        let _: Empty = try await request(
+            .post,
             "/api/contacts/sync",
-            body: ["phoneNumbers": phoneNumbers],
-            requireAuth: true
+            body: SyncContactsBody(phoneNumbers: phoneNumbers),
+            baseURL: Config.apiBaseURL
         )
+    }
+
+    private struct AddFriendBody: Encodable {
+        let email: String
     }
 
     struct AddFriendResponse: Decodable {
@@ -60,9 +111,10 @@ enum APIClient {
 
     static func addFriend(email: String) async throws {
         let _: AddFriendResponse = try await request(
+            .post,
             "/api/friends/add",
-            body: ["email": email],
-            requireAuth: true
+            body: AddFriendBody(email: email),
+            baseURL: Config.apiBaseURL
         )
     }
 }

@@ -52,7 +52,6 @@ struct SettingsScreen: View {
     }
 
     private func save() async {
-        guard let userId = appState.session?.user.id else { return }
         guard let e164 = PhoneNumberNormalizer.normalizeToE164(phoneNumber) else {
             errorMessage = "Enter a valid phone number, e.g. +1 555 123 4567."
             saved = false
@@ -64,7 +63,7 @@ struct SettingsScreen: View {
         defer { saving = false }
 
         do {
-            try await ProfileRepository.updatePhoneNumber(userId: userId, e164: e164)
+            try await ProfileRepository.updatePhoneNumber(e164: e164)
             await appState.refreshProfile()
             saved = true
         } catch {

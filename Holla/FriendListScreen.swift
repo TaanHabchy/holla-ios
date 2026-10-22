@@ -1,13 +1,9 @@
 import SwiftUI
 
 struct FriendListScreen: View {
-    @State private var viewModel: FriendListViewModel
+    @State private var viewModel = FriendListViewModel()
     @Environment(\.openURL) private var openURL
     @State private var showAddFriend = false
-
-    init(userId: UUID) {
-        _viewModel = State(initialValue: FriendListViewModel(userId: userId))
-    }
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {

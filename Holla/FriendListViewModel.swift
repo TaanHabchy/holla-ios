@@ -10,24 +10,18 @@ final class FriendListViewModel {
     var addingFriend = false
     var addFriendError: String?
 
-    private let userId: UUID
-
-    init(userId: UUID) {
-        self.userId = userId
-    }
-
     func refresh() async {
         loading = true
         defer { loading = false }
-        friends = (try? await FriendsRepository.fetchFriends(userId: userId)) ?? []
-        isAvailable = (try? await AvailabilityRepository.fetchMyStatus(userId: userId)) ?? false
+        friends = (try? await FriendsRepository.fetchFriends()) ?? []
+        isAvailable = (try? await AvailabilityRepository.fetchMyStatus()) ?? false
     }
 
     func setAvailable(_ available: Bool) async {
         statusLoading = true
         defer { statusLoading = false }
         do {
-            try await AvailabilityRepository.setAvailable(userId: userId, available: available)
+            try await AvailabilityRepository.setAvailable(available)
             isAvailable = available
         } catch {
             // Revert optimistic toggle on failure by leaving isAvailable as-is;

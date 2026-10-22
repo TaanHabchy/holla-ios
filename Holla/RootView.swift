@@ -16,16 +16,14 @@ struct RootView: View {
         case .onboarding:
             OnboardingContainerView()
         case .main:
-            if let userId = appState.session?.user.id {
-                NavigationStack {
-                    FriendListScreen(userId: userId)
-                        .navigationDestination(for: MainRoute.self) { route in
-                            switch route {
-                            case .settings:
-                                SettingsScreen()
-                            }
+            NavigationStack {
+                FriendListScreen()
+                    .navigationDestination(for: MainRoute.self) { route in
+                        switch route {
+                        case .settings:
+                            SettingsScreen()
                         }
-                }
+                    }
             }
         }
     }
